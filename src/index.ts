@@ -6,6 +6,7 @@ import revieweeRoutes from './routes/RevieweeRoutes'
 import reviewerRoutes from './routes/ReviewerRoutes'
 import adminRoutes    from './routes/AdminRoutes'
 import { Request, Response, NextFunction } from 'express'
+import path from 'path'
 
 dotenv.config()
 const app = express()
@@ -20,6 +21,11 @@ app.use('/api/admin',    adminRoutes)
 interface ErrorWithStatus extends Error {
     status?: number
 }
+
+app.use(
+  '/assets',
+  express.static(path.join(__dirname, '../public/assets'))
+)
 
 app.use((err: ErrorWithStatus, req: Request, res: Response, next: NextFunction) => {
     console.error(err)
