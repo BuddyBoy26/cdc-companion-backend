@@ -321,7 +321,7 @@ export async function sendReviewEmail(options: ReviewEmailOptions): Promise<void
     attachments: [
       {
         filename: 'prepnest.jpg',
-        path: path.resolve(__dirname, '../assets/prepnest.jpg'),
+        path: path.resolve(__dirname, '../../assets/prepnest.jpg'),
         cid: 'prepnestImage',
       },
     ],
