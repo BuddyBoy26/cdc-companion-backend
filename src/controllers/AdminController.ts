@@ -1,19 +1,39 @@
 import { Request, Response, NextFunction } from 'express'
-import { PrismaClient, Profile } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
 
 export default class AdminController {
   // POST /api/admin/login
+
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, password } = req.body
-      const admin = await prisma.reviewer.findUnique({ where: { name, admin: true } })
+      const admin = await prisma.admin.findFirst({ where: { name } })
       if (!admin || admin.password !== password) {
-        return res.status(401).json({ error: 'Invalid admin credentials' })
+        return res.status(401).json({ error: 'Invalid credentials' })
       }
-      // sign JWT in prod
-      return res.json({ id: admin.id, name: admin.name })
+
+      const payload = {
+        id: admin.id,
+        name: admin.name,
+      }
+
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET! /* make sure you have this in .env */,
+        { expiresIn: '8h' }
+      )
+
+      // Return the token and any user info you need on the client
+      return res.json({
+        token,
+        admin: {
+          id: admin.id,
+          name: admin.name,
+        }
+      })
     } catch (err: any) {
       next(err)
     }
@@ -88,13 +108,13 @@ export default class AdminController {
         })
 
         // e) increment their reviewedCount in the database…
-        await prisma.reviewer.update({
-          where: { id: chosen.id },
-          data: { reviewedCount: { increment: 1 } },
-        })
+        // await prisma.reviewer.update({
+        //   where: { id: chosen.id },
+        //   data: { reviewedCount: { increment: 1 } },
+        // })
 
         // …and in our in-memory copy so subsequent loops see the updated load
-        chosen.reviewedCount++
+        // chosen.reviewedCount++
       }
 
       return res.json({ message: 'Allocation complete' })

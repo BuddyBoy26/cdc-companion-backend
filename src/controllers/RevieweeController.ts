@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { PrismaClient, Profile } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+
 
 const prisma = new PrismaClient()
 
@@ -17,10 +18,10 @@ export default class RevieweeController {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    // validate profile
-    if (!Object.values(Profile).includes(profile)) {
-      return res.status(400).json({ error: 'Invalid profile' })
-    }
+    // // validate profile
+    // if (!Object.values(Profile).includes(profile)) {
+    //   return res.status(400).json({ error: 'Invalid profile' })
+    // }
 
     const reviewee = await prisma.reviewee.create({
       data: {
@@ -31,6 +32,8 @@ export default class RevieweeController {
         profile,
       },
     })
+
+    console.log("cv submitted")
 
     return res.status(201).json(reviewee)
   } catch (err: any) {

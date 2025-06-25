@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// Profiles that both Reviewers and Reviewees can have
-enum Profile {
-  CORE
-  CONSULT
-  DATA
-  FINANCE_QUANT
-  PRODUCT_FMCG
-  SOFTWARE
-}
 
 /// A student submitting a single CV
 model Reviewee {
@@ -24,7 +15,7 @@ model Reviewee {
   rollNo       String    @unique
   email        String?
   cvLink       String
-  profile      Profile
+  profile      String
   status       Boolean   @default(false)    // false = not reviewed; true = reviewed
   submittedAt  DateTime  @default(now())
 
@@ -33,12 +24,18 @@ model Reviewee {
   review       Review?
 }
 
+model Admin {
+  id           Int       @id @default(autoincrement())
+  name         String
+  password     String
+}
+
 /// A reviewer, who may work across multiple profiles
 model Reviewer {
   id            Int        @id @default(autoincrement())
   name          String     @unique
   password      String
-  profiles      Profile[]  @default([])
+  profiles      String[]  @default([])
   reviewsNumber      Int        // how many CVs they can handle
   reviewedCount Int        @default(0)
   email         String?

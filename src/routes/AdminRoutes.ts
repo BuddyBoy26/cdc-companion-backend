@@ -1,8 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import AdminController from '../controllers/AdminController'
+import { auth } from '../middleware/auth'
 
 const ctrl = new AdminController()
 const router = Router()
+
 
 router.post(
   '/login',

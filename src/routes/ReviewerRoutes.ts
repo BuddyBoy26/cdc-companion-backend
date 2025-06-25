@@ -25,4 +25,12 @@ router.post(
   }
 )
 
+router.get(
+  '/assigned',
+  (req: Request, res: Response, next: NextFunction) => {
+    ctrl.getAssignedCVs(req, res, next).catch(next)
+  }
+)
+
+
 export default router
